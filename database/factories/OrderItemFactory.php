@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Order;
+use App\Models\Medication;
 
 /**
  * @extends Factory<OrderItem>
@@ -18,7 +20,8 @@ class OrderItemFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'order_id' => Order::factory(),
+            'medication_id' => Medication::factory(),
         ];
     }
 }
