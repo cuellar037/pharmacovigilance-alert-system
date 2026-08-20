@@ -1,17 +1,1 @@
-// resources/css/app.scss
-// Importar Bootstrap
-@import 'bootstrap/scss/bootstrap';
-
-// Tus estilos personalizados
-body {
-    background-color: #f8f9fa;
-}
-
-.btn-group .btn {
-    font-size: 0.75rem;
-}
-
-.modal.fade.show {
-    display: block !important;
-    background-color: rgba(0, 0, 0, 0.5) !important;
-}
+@use 'bootstrap/scss/bootstrap' as *;
