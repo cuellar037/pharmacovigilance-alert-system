@@ -46,7 +46,13 @@
 				<div class="card-body">
 					<div class="d-flex justify-content-between align-items-center mb-3">
 						<h5 class="card-title mb-0">Órdenes Encontradas</h5>
-						<span class="badge bg-primary">{{ orders.length }} resultados</span>
+						<div>
+							<span class="badge bg-primary me-2">{{ orders.length }} resultados</span>
+							<!-- Botón para alertas masivas -->
+							<button v-if="selectedOrders.length > 0" class="btn btn-warning btn-sm" @click="showBulkAlertModal">
+								📨 Alertar Seleccionados ({{ selectedOrders.length }})
+							</button>
+						</div>
 					</div>
 
 					<div v-if="loading" class="text-center py-5">
@@ -61,6 +67,10 @@
 						<table class="table table-hover">
 							<thead>
 								<tr>
+									<th style="width: 40px;">
+										<input type="checkbox" @change="selectAll"
+											:checked="selectedOrders.length === orders.length && orders.length > 0">
+									</th>
 									<th>ID Orden</th>
 									<th>Cliente</th>
 									<th>Contacto</th>
@@ -70,6 +80,9 @@
 							</thead>
 							<tbody>
 								<tr v-for="order in orders" :key="order.id">
+									<td>
+										<input type="checkbox" :value="order" v-model="selectedOrders">
+									</td>
 									<td>#{{ order.id }}</td>
 									<td>{{ order.customer.name }}</td>
 									<td>
@@ -100,8 +113,12 @@
 			</div>
 		</div>
 
-		<!-- Modal de Alerta -->
-		<AlertModal v-if="showModal" :order="selectedOrder" @confirm="sendAlert" @close="closeModal" />
+		<!-- Modal para Alerta Individual -->
+		<AlertModal v-if="showModal" :order="selectedOrder" :bulk="false" @confirm="sendSingleAlert" @close="closeModal" />
+
+		<!-- Modal para Alertas Masivas -->
+		<AlertModal v-if="showBulkModal" :orders="selectedOrders" :bulk="true" :count="selectedOrders.length"
+			@confirm="sendBulkAlerts" @close="closeBulkModal" />
 	</div>
 </template>
 
@@ -114,7 +131,11 @@ import AlertModal from '../components/AlertModal.vue'
 const router = useRouter()
 const loading = ref(false)
 const orders = ref([])
+const selectedOrders = ref([])
+
+// Modales
 const showModal = ref(false)
+const showBulkModal = ref(false)
 const selectedOrder = ref(null)
 
 // Filtros por defecto
@@ -124,6 +145,7 @@ const filters = ref({
 	end_date: getDefaultEndDate()
 })
 
+// Funciones de utilidad
 function getDefaultStartDate() {
 	const date = new Date()
 	date.setDate(date.getDate() - 30)
@@ -145,6 +167,7 @@ function formatDate(date) {
 // Buscar órdenes
 const searchOrders = async () => {
 	loading.value = true
+	selectedOrders.value = [] // Limpiar selección al buscar
 	try {
 		const response = await api.get('/orders', {
 			params: {
@@ -155,7 +178,6 @@ const searchOrders = async () => {
 		})
 		orders.value = response.data.data || []
 	} catch (error) {
-		console.error('Error al buscar órdenes:', error)
 		alert('Error al buscar órdenes')
 	} finally {
 		loading.value = false
@@ -167,7 +189,16 @@ onMounted(() => {
 	searchOrders()
 })
 
-// Modal
+// Seleccionar todos
+const selectAll = (event) => {
+	if (event.target.checked) {
+		selectedOrders.value = [...orders.value]
+	} else {
+		selectedOrders.value = []
+	}
+}
+
+// ---------- ALERTA INDIVIDUAL ----------
 const showAlertModal = (order) => {
 	selectedOrder.value = order
 	showModal.value = true
@@ -178,11 +209,18 @@ const closeModal = () => {
 	selectedOrder.value = null
 }
 
-const sendAlert = async () => {
+const sendSingleAlert = async () => {
 	try {
-		await api.post('/alerts/send', {
-			order_id: selectedOrder.value.id
-		})
+		const payload = {
+			alerts: [
+				{
+					customer_id: selectedOrder.value.customer.id,
+					order_id: selectedOrder.value.id
+				}
+			]
+		}
+
+		await api.post('/alerts/send', payload)
 		alert('✅ Alerta enviada exitosamente')
 		closeModal()
 	} catch (error) {
@@ -190,7 +228,33 @@ const sendAlert = async () => {
 	}
 }
 
-// Logout
+// ---------- ALERTAS MASIVAS ----------
+const showBulkAlertModal = () => {
+	showBulkModal.value = true
+}
+
+const closeBulkModal = () => {
+	showBulkModal.value = false
+}
+
+const sendBulkAlerts = async () => {
+	try {
+		const alerts = selectedOrders.value.map(order => ({
+			customer_id: order.customer.id,
+			order_id: order.id
+		}))
+
+		const response = await api.post('/alerts/send', { alerts })
+
+		alert(`✅ ${alerts.length} alertas enviadas exitosamente`)
+		selectedOrders.value = []
+		closeBulkModal()
+	} catch (error) {
+		alert('❌ Error al enviar las alertas')
+	}
+}
+
+// ---------- LOGOUT ----------
 const logout = () => {
 	localStorage.removeItem('auth_token')
 	router.push({ name: 'login' })
