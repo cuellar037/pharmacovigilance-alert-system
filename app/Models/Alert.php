@@ -21,7 +21,7 @@ class Alert extends Model
     ];
 
     protected $casts = [
-        'set_at' => 'datetime',
+        'sent_at' => 'datetime',
     ];
 
     function customer(): BelongsTo

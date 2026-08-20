@@ -32,7 +32,7 @@ class OrderController extends Controller
     // Full order Details
     public function show(Order $order): JsonResponse
     {
-        $order->load(['customer', 'orderItems.meedication']);
+        $order->load(['customer', 'orderItems.medication']);
         return response()->json($order);
     }
 

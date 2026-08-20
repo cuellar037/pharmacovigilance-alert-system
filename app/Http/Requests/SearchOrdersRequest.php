@@ -42,7 +42,7 @@ class SearchOrdersRequest extends FormRequest
     }
 
     // This method returns the date range for the search, defaulting to the last 30 days if no dates are provided.
-    public function daterange(): array
+    public function dateRange(): array
     {
         return [
             'start' => $this->input('start_date')
