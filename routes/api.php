@@ -18,8 +18,12 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::get('/user', fn(Request $request) => $request->user());
 
     Route::get('/orders', [OrderController::class, 'index']); 
+    Route::get('/orders/export', [OrderController::class, 'export']);
     Route::get('/orders/{order}', [OrderController::class, 'show']); 
     Route::get('/customer/{customer}', [OrderController::class, 'show']); 
 
     Route::post('/alerts/send', [AlertController::class, 'send']);
+
+
+
 });
