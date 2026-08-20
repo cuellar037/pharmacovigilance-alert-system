@@ -15,6 +15,8 @@ class Alert extends Model
         'customer_id', 
         'order_id',
         'user_id',
+        'status', 
+        'error_message',
         'set_at'
     ];
 
