@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('alerts', function (Blueprint $table) {
             $table->string('status')->default('pending')->after('user_id'); 
-            $table->text('error_message')->nullable()->after('status');
+            $table->text('error_messages')->nullable()->after('status');
             $table->timestamp('sent_at')->nullable()->change();
         });
     }
@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('alerts', function (Blueprint $table) {
             Schema::table('alerts', function (Blueprint $table){
-                $table->dropColumn(['status', 'error_messagees']);
+                $table->dropColumn(['status', 'error_messages']);
             });
         });
     }
