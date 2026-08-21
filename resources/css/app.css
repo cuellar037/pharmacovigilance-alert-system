@@ -1,12 +1,68 @@
-@import 'tailwindcss';
+/* resources/css/app.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source "../**/*.blade.php";
-@source "../**/*.js";
-@source "../**/*.vue";
+@layer base {
+  body {
+    @apply bg-gray-50 font-sans antialiased;
+  }
+}
 
-@theme {
-  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
+@layer components {
+  .login-container {
+    @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 p-4;
+  }
+
+  .login-card {
+    @apply bg-white rounded-2xl shadow-lg p-8 max-w-md w-full;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/15 outline-none transition-all;
+  }
+
+  .form-label {
+    @apply font-semibold text-sm text-gray-700 mb-1.5 block;
+  }
+
+  .btn-primary-custom {
+    @apply bg-primary-600 text-white font-semibold py-2.5 px-6 rounded-xl transition-all hover:bg-primary-700 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed;
+  }
+
+  .card-modern {
+    @apply bg-white rounded-xl shadow-lg border-0 transition-all duration-300 hover:shadow-xl;
+  }
+
+  .navbar-custom {
+    @apply bg-gradient-to-r from-primary-500 to-primary-700 py-4 shadow-lg;
+  }
+
+  .badge-custom {
+    @apply bg-primary-600 text-white font-semibold px-4 py-1.5 rounded-full text-sm;
+  }
+
+  .btn-bulk-alert {
+    @apply bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold px-4 py-1.5 rounded-full text-sm transition-all hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .btn-outline-primary-custom {
+    @apply bg-blue-50 text-blue-600 border border-blue-200 font-semibold px-3 py-1.5 rounded-lg text-sm transition-all hover:bg-blue-600 hover:text-white hover:-translate-y-0.5;
+  }
+
+  .btn-outline-warning-custom {
+    @apply bg-amber-50 text-amber-600 border border-amber-200 font-semibold px-3 py-1.5 rounded-lg text-sm transition-all hover:bg-amber-600 hover:text-white hover:-translate-y-0.5;
+  }
+
+  .btn-outline-info-custom {
+    @apply bg-teal-50 text-teal-600 border border-teal-200 font-semibold px-3 py-1.5 rounded-lg text-sm transition-all hover:bg-teal-600 hover:text-white hover:-translate-y-0.5;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden;
+  }
 }
