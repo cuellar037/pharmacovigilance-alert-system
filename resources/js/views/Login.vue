@@ -99,7 +99,6 @@ const handleLogin = async () => {
   errorMessage.value = null
 
   try {
-    await api.get('/sanctum/csrf-cookie')
     const response = await api.post('/login', form.value)
 
     if (response.data.token) {

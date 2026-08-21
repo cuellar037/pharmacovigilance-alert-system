@@ -12,7 +12,7 @@
             <span>Orden #{{ route.params.id }}</span>
             <span v-if="order"
               class="text-xs font-mono font-normal px-2.5 py-1 bg-cyan-950/80 text-cyan-400 border border-cyan-800/50 rounded-full">
-              {{ order.items?.length || 0 }} Items
+              {{ order.order_items?.length || 0 }} Items
             </span>
           </h1>
         </div>
@@ -88,9 +88,9 @@
           <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-xl overflow-hidden">
             <div class="p-5 border-b border-slate-800 flex items-center justify-between">
               <h3 class="font-bold text-white text-base">Medicamentos Adquiridos</h3>
-              <span class="text-xs text-slate-400 font-mono">{{ order.items?.length || 0 }} productos</span>
+              <span class="text-xs text-slate-400 font-mono">{{ order.order_items?.length || 0 }} productos</span>
             </div>
-            <div v-if="!order.items || order.items.length === 0" class="p-12 text-center">
+            <div v-if="!order.order_items || order.order_items.length === 0" class="p-12 text-center">
               <svg class="w-12 h-12 text-slate-600 mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -109,14 +109,15 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800/60">
-                  <tr v-for="(item, index) in order.items" :key="item.id || index"
+                  <tr v-for="(item, index) in order.order_items" :key="item.id || index"
                     class="hover:bg-slate-800/40 transition-colors">
                     <td class="py-3.5 px-4 font-mono text-slate-500 text-center">
                       {{ String(index + 1).padStart(2, '0') }}
-                    </td>[]
+                    </td>
                     <td class="py-3.5 px-4 font-medium text-white truncate max-w-xs sm:max-w-none">
                       {{ item.medication?.name || item.name || 'Medicamento Sin Nombre' }}
                     </td>
+
                     <td class="py-3.5 px-4 text-right font-mono">
                       <span
                         class="inline-flex items-center justify-center min-w-[2.5rem] px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-200 border border-slate-700/60 font-semibold">
@@ -147,6 +148,8 @@ onMounted(async () => {
   try {
     const response = await api.get(`/orders/${route.params.id}`)
     order.value = response.data
+    console.log(order);
+    
   } catch (error) {
     console.error('Error al obtener el detalle de la orden:', error)
   } finally {

@@ -34,7 +34,7 @@ class OrderController extends Controller
   {
     $order = Order::with([
       'customer',
-      'items.medication'
+      'orderItems.medication'
     ])->findOrFail($id);
     return response()->json($order);
   }

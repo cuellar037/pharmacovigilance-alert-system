@@ -13,7 +13,7 @@ class CustomerController extends Controller
   // Customer details, including their order history
   public function show($id): JsonResponse
   {
-    $customer = Customer::with(['orders.items.medication'])->findOrFail($id);
+    $customer = Customer::with(['orders.orderItems.medication'])->findOrFail($id);
     return response()->json($customer);
   }
 }
