@@ -1,7 +1,5 @@
-<!-- resources/js/views/Dashboard.vue -->
 <template>
   <div>
-    <!-- Navbar -->
     <nav class="navbar navbar-dark bg-primary">
       <div class="container-fluid">
         <span class="navbar-brand">🔄 Pharmacovigilance Alert System</span>
@@ -10,9 +8,7 @@
         </button>
       </div>
     </nav>
-
     <div class="container mt-4">
-      <!-- Formulario de Búsqueda -->
       <div class="card shadow mb-4">
         <div class="card-body">
           <h5 class="card-title">Buscar Órdenes</h5>
@@ -36,7 +32,6 @@
                     <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
                     Buscar
                   </button>
-                  <!-- ✅ BOTÓN EXPORTAR CSV -->
                   <button type="button" class="btn btn-success w-100" :disabled="orders.length === 0 || exporting"
                     @click="exportCSV">
                     <span v-if="exporting" class="spinner-border spinner-border-sm me-2"></span>
@@ -48,15 +43,12 @@
           </form>
         </div>
       </div>
-
-      <!-- Tabla de Resultados -->
       <div class="card shadow">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">Órdenes Encontradas</h5>
             <div>
               <span class="badge bg-primary me-2">{{ orders.length }} resultados</span>
-              <!-- Botón para alertas masivas -->
               <button v-if="selectedOrders.length > 0" class="btn btn-warning btn-sm" @click="showBulkAlertModal">
                 📨 Alertar Seleccionados ({{ selectedOrders.length }})
               </button>
@@ -121,10 +113,10 @@
       </div>
     </div>
 
-    <!-- Modal para Alerta Individual -->
+    <!-- Modal for Individual Alert -->
     <AlertModal v-if="showModal" :order="selectedOrder" :bulk="false" @confirm="sendSingleAlert" @close="closeModal" />
 
-    <!-- Modal para Alertas Masivas -->
+    <!-- Modal for Mass Alerts -->
     <AlertModal v-if="showBulkModal" :orders="selectedOrders" :bulk="true" :count="selectedOrders.length"
       @confirm="sendBulkAlerts" @close="closeBulkModal" />
   </div>
@@ -147,14 +139,41 @@ const showModal = ref(false)
 const showBulkModal = ref(false)
 const selectedOrder = ref(null)
 
-// Filtros por defecto
+// ---------- FILTER PERSISTENCE ---------- //
+const saveFilters = () => {
+  localStorage.setItem('dashboard_filters', JSON.stringify(filters.value))
+}
+
+const loadFilters = () => {
+  const saved = localStorage.getItem('dashboard_filters')
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved)
+      filters.value = parsed
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+  return false
+}
+
 const filters = ref({
   lot: '951357',
   start_date: getDefaultStartDate(),
   end_date: getDefaultEndDate()
 })
 
-// Funciones de utilidad
+const savedFilters = loadFilters()
+if (!savedFilters) {
+  filters.value = {
+    lot: '951357',
+    start_date: getDefaultStartDate(),
+    end_date: getDefaultEndDate()
+  }
+}
+
+// Utility functions
 function getDefaultStartDate() {
   const date = new Date()
   date.setDate(date.getDate() - 30)
@@ -173,10 +192,10 @@ function formatDate(date) {
   })
 }
 
-// Buscar órdenes
+// Search orders
 const searchOrders = async () => {
   loading.value = true
-  selectedOrders.value = [] // Limpiar selección al buscar
+  selectedOrders.value = []
   try {
     const response = await api.get('/orders', {
       params: {
@@ -186,19 +205,19 @@ const searchOrders = async () => {
       }
     })
     orders.value = response.data.data || []
+    saveFilters()
   } catch (error) {
+    console.error('Error al buscar órdenes:', error)
     alert('Error al buscar órdenes')
   } finally {
     loading.value = false
   }
 }
 
-// Cargar datos al montar
 onMounted(() => {
   searchOrders()
 })
 
-// Seleccionar todos
 const selectAll = (event) => {
   if (event.target.checked) {
     selectedOrders.value = [...orders.value]
@@ -207,7 +226,7 @@ const selectAll = (event) => {
   }
 }
 
-// ---------- ALERTA INDIVIDUAL ----------
+// ---------- INDIVIDUAL ALERT ---------- //
 const showAlertModal = (order) => {
   selectedOrder.value = order
   showModal.value = true
@@ -237,7 +256,7 @@ const sendSingleAlert = async () => {
   }
 }
 
-// ---------- ALERTAS MASIVAS ----------
+// ---------- MASS ALERTS ---------- //
 const showBulkAlertModal = () => {
   showBulkModal.value = true
 }
@@ -263,7 +282,7 @@ const sendBulkAlerts = async () => {
   }
 }
 
-// ---------- EXPORTAR CSV ----------
+// ---------- EXPORT CSV ---------- //
 const exportCSV = async () => {
   exporting.value = true
   try {
@@ -299,7 +318,7 @@ const exportCSV = async () => {
   }
 }
 
-// ---------- LOGOUT ----------
+// ---------- LOGOUT ---------- // 
 const logout = () => {
   localStorage.removeItem('auth_token')
   router.push({ name: 'login' })

@@ -50,7 +50,6 @@ const router = useRouter()
 const loading = ref(false)
 const errorMessage = ref(null)
 
-// Campos vacíos - el usuario debe escribir
 const form = ref({
 	username: '',
 	password: ''

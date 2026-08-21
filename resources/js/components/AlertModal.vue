@@ -1,4 +1,3 @@
-<!-- resources/js/components/AlertModal.vue -->
 <template>
   <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog">
@@ -11,7 +10,7 @@
           <button type="button" class="btn-close" @click="$emit('close')"></button>
         </div>
         <div class="modal-body">
-          <!-- Modo Bulk -->
+          <!-- Bulk Mode -->
           <div v-if="bulk">
             <p>Estás a punto de enviar alertas a <strong>{{ count }}</strong> clientes:</p>
             <div class="card mb-3">
@@ -26,7 +25,7 @@
             </div>
           </div>
 
-          <!-- Modo Individual -->
+          <!-- Single-Player Mode -->
           <div v-else>
             <p>Estás a punto de enviar una alerta al siguiente cliente:</p>
             <div class="card mb-3">
@@ -46,7 +45,6 @@
             <strong>Medicamento:</strong> Lote #951357<br>
             <strong>Mensaje:</strong> Alerta de seguridad sobre el medicamento adquirido.
           </div>
-
           <p class="text-muted small">
             Esta acción enviará un correo electrónico {{ bulk ? 'a cada cliente' : 'al cliente' }}.
           </p>

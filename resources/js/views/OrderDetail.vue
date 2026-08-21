@@ -7,11 +7,9 @@
         ← Volver al Dashboard
       </router-link>
     </div>
-
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary"></div>
     </div>
-
     <div v-else-if="order" class="row">
       <div class="col-md-6">
         <div class="card mb-3">
@@ -29,7 +27,6 @@
           </div>
         </div>
       </div>
-
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
@@ -42,7 +39,6 @@
           </div>
         </div>
       </div>
-
       <div class="col-12 mt-3">
         <div class="card">
           <div class="card-header">

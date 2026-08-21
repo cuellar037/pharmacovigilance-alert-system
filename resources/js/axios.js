@@ -1,4 +1,3 @@
-// resources/js/axios.js
 import axios from 'axios'
 import router from './router'
 
@@ -9,10 +8,10 @@ const api = axios.create({
     'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest'
   },
-  withCredentials: true // Importante para Sanctum
+  withCredentials: true
 })
 
-// Interceptor para agregar el token automáticamente
+// Interceptor to automatically add the token
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('auth_token')
   if (token) {
@@ -21,7 +20,7 @@ api.interceptors.request.use(config => {
   return config
 })
 
-// Interceptor para manejar errores de autenticación
+// Interceptor to handle authentication errors
 api.interceptors.response.use(
   response => response,
   error => {
