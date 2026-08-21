@@ -109,7 +109,7 @@
                     <td class="py-3.5 px-4">
                       <span
                         class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-800 border border-slate-700/60 text-slate-300 text-[11px]">
-                        {{ order.orderItems?.length || 0 }} items
+                        {{ order.order_items?.length || 0 }} items
                       </span>
                     </td>
                     <td class="py-3.5 px-4 text-right">
