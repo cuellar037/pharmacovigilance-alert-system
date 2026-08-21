@@ -127,6 +127,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../axios'
 import AlertModal from '../components/AlertModal.vue'
+import Swal from 'sweetalert2'
+import { alertSuccess, alertError, alertWarning, successModal, errorModal } from '../sweetalert'
 
 const router = useRouter()
 const loading = ref(false)
@@ -208,7 +210,7 @@ const searchOrders = async () => {
     saveFilters()
   } catch (error) {
     console.error('Error al buscar órdenes:', error)
-    alert('Error al buscar órdenes')
+    alertError('❌ Error al buscar órdenes')
   } finally {
     loading.value = false
   }
@@ -249,10 +251,11 @@ const sendSingleAlert = async () => {
     }
 
     await api.post('/alerts/send', payload)
-    alert('✅ Alerta enviada exitosamente')
+    alertSuccess('✅ Alerta enviada exitosamente al cliente')
     closeModal()
   } catch (error) {
-    alert('❌ Error al enviar la alerta')
+    console.error('Error:', error.response?.data)
+    alertError('❌ Error al enviar la alerta')
   }
 }
 
@@ -272,13 +275,14 @@ const sendBulkAlerts = async () => {
       order_id: order.id
     }))
 
-    const response = await api.post('/alerts/send', { alerts })
+    await api.post('/alerts/send', { alerts })
 
-    alert(`✅ ${alerts.length} alertas enviadas exitosamente`)
+    alertSuccess(`✅ ${alerts.length} alertas enviadas exitosamente`)
     selectedOrders.value = []
     closeBulkModal()
   } catch (error) {
-    alert('❌ Error al enviar las alertas')
+    console.error('Error:', error.response?.data)
+    alertError('❌ Error al enviar las alertas')
   }
 }
 
@@ -292,15 +296,12 @@ const exportCSV = async () => {
         start_date: filters.value.start_date,
         end_date: filters.value.end_date
       },
-      responseType: 'blob'  // Importante para descargar archivos
+      responseType: 'blob'
     })
 
-    // Crear un enlace para descargar el archivo
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
-
-    // Nombre del archivo con timestamp
     const timestamp = new Date().toISOString().slice(0, 10)
     link.setAttribute('download', `ordenes_lote_${filters.value.lot}_${timestamp}.csv`)
 
@@ -309,18 +310,36 @@ const exportCSV = async () => {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
 
-    alert('✅ CSV exportado exitosamente')
+    alertSuccess('✅ CSV exportado exitosamente')
   } catch (error) {
     console.error('Error al exportar CSV:', error)
-    alert('❌ Error al exportar el archivo')
+    alertError('❌ Error al exportar el archivo')
   } finally {
     exporting.value = false
   }
 }
 
 // ---------- LOGOUT ---------- // 
-const logout = () => {
-  localStorage.removeItem('auth_token')
-  router.push({ name: 'login' })
+const logout = async () => {
+  try {
+    // Confirmación antes de cerrar sesión
+    const result = await Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: '¿Estás seguro que deseas salir?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, salir',
+      cancelButtonText: 'Cancelar'
+    })
+
+    if (result.isConfirmed) {
+      localStorage.removeItem('auth_token')
+      router.push({ name: 'login' })
+    }
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error)
+  }
 }
 </script>
