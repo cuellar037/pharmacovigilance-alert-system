@@ -9,30 +9,35 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
-    /** @use HasFactory<\Database\Factories\OrderFactory> */
-    use HasFactory;
+  /** @use HasFactory<\Database\Factories\OrderFactory> */
+  use HasFactory;
 
-    protected $fillable= [
-        'customer_id', 
-        'purchase_date'
-    ];
+  protected $fillable = [
+    'customer_id',
+    'purchase_date'
+  ];
 
-    protected $casts = [
-        'purchase_date' => 'date',
-    ];
+  protected $casts = [
+    'purchase_date' => 'date',
+  ];
 
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
-    }
+  public function customer(): BelongsTo
+  {
+    return $this->belongsTo(Customer::class);
+  }
 
-    public function orderItems(): HasMany
-    {
-        return $this->hasMany(OrderItem::class);
-    }
+  public function orderItems(): HasMany
+  {
+    return $this->hasMany(OrderItem::class);
+  }
 
-    public function alerts(): HasMany
-    {
-        return $this->hasMany(Alert::class);
-    }
+  public function alerts(): HasMany
+  {
+    return $this->hasMany(Alert::class);
+  }
+
+  public function items()
+  {
+    return $this->hasMany(OrderItem::class);
+  }
 }

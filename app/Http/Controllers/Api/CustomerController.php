@@ -10,10 +10,10 @@ use App\Models\Customer;
 
 class CustomerController extends Controller
 {
-    // Customer details, including their order history
-    public function show(Customer $customer): JsonResponse 
-    {
-        $customer->load('orders'); 
-        return response()->json($customer);
-    }
+  // Customer details, including their order history
+  public function show($id): JsonResponse
+  {
+    $customer = Customer::with(['orders.items.medication'])->findOrFail($id);
+    return response()->json($customer);
+  }
 }
